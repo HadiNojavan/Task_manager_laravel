@@ -12,4 +12,9 @@ class Task extends Model
 
     protected $guarded = ['id', 'created_at', 'updated_at','role'];
 
+    public function users()
+    {
+        $this->belongsToMany(User::class);
+    }
+
 }
