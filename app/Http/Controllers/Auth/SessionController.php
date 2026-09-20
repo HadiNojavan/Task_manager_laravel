@@ -3,17 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
-//to login user
 class SessionController extends Controller
 {
-    public function create()
-    {
-        return view('auth.login');
-    }
-
     public function store(Request $request)
     {
         $credentials = $request->validate([
@@ -21,32 +17,30 @@ class SessionController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (Auth::attempt ([
-                'email' => $credentials['email'],
-                'password' => $credentials['password'],],
-            true
-        )) {
-            $request->session()->regenerate();
+        $user = User::where('email', $credentials['email'])->first();
 
-            return redirect()->route('tasks.index');
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials do not match our records.'],
+            ]);
         }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+        $token = $user->createToken('authToken',['action:crud'],now()->addMinutes(10))->plainTextToken;
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user,
+            'message' => 'Login successful',
+        ]);
     }
 
     public function destroy(Request $request)
     {
-        Auth::logout();
+        $request->user()->currentAccessToken()->delete();
 
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return redirect('/');
-
+        return response()->json([
+            'message' => 'Logged out successfully',
+        ]);
     }
-
-
 }
