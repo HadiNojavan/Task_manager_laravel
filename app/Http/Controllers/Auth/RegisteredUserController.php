@@ -34,9 +34,17 @@ class RegisteredUserController extends Controller
         ]);
 
         //login user
-        Auth::login($user);
+        //we dont need we kind of login because we dont use seesion we use api
+        //Auth::login($user);
 
-        return redirect()->route('tasks.index');
+        $token=$user->createToken('authToken',['action:crud'],now()->addMinutes(10))->plainTextToken;
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user'=>$user,
+            'message'=>'User Created Successfully'
+        ]);
 
     }
 }
