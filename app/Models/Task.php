@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use Database\Factories\TaskFactory;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[UseFactory(TaskFactory::class)]
 class Task extends Model
 {
     /** @use HasFactory<\Database\Factories\TaskFactory> */
@@ -22,6 +25,11 @@ class Task extends Model
         return $this->users()
             ->wherePivot('user_id', $user->id)
             ->exists();
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 
 }

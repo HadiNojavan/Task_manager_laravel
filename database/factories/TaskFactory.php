@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use App\Models\Task;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,7 +19,20 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'description' => $this->faker->sentence(),
+            'title' => $this->faker->sentence(4),
+            'status' => $this->faker->randomElement([
+                'pending',
+                'completed',
+                'incomplete',
+            ]),
+            'priority' => $this->faker->randomElement([
+                'low',
+                'medium',
+                'high',
+            ]),
+            'due_date' => $this->faker->dateTime(),
+            'category_id' => Category::factory(),
         ];
     }
 }
