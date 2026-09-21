@@ -36,9 +36,16 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Task $task)
+    public function show(Request $request,Task $task)
     {
-        //
+        //this $task return all task info
+        // dd($task);
+        if ($request->user()->can('view', $task)) {
+            //there is no need for this
+            //$task=Task::find($task);
+            return response()->json($task);
+        }
+        abort(403, 'You are not authorized to view this task');
     }
 
     /**

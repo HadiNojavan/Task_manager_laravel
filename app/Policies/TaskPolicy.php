@@ -16,7 +16,7 @@ class TaskPolicy
     //the ability here means the methods of this policy
     public function before(User $user, string $ability): bool|null
     {
-        if ($user->isSuperAdmin()) {
+        if ($user->isAdmin() || $user->isSuperAdmin()) {
             return true;
         }
         return null;
@@ -32,6 +32,9 @@ class TaskPolicy
      */
     public function view(User $user, Task $task): bool
     {
+        if ($task->belongsToUser($user)) {
+            return true;
+        }
         return false;
     }
 
