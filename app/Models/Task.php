@@ -14,7 +14,14 @@ class Task extends Model
 
     public function users()
     {
-        $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class);
+    }
+
+    public function belongsToUser(User $user): bool
+    {
+        return $this->users()
+            ->wherePivot('user_id', $user->id)
+            ->exists();
     }
 
 }
