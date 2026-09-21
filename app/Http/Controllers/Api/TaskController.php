@@ -13,16 +13,27 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $user=request()->user();
+        $user = request()->user();
+
         if ($user->isAdmin() || $user->isSuperAdmin()) {
-            $tasks = Task::all();
-        }
-        else {
-            $tasks = $user->tasks()->get();
+            $tasks = Task::query();
+        } else
+            $tasks = $user->tasks();
+
+        if ($request->hasAny(['status', 'priority'])) {
+
+            $status = $request->input('status', null);
+            $priority = $request->input('priority', null);
+
+            if ($status)
+                $tasks->where('status', $status);
+
+            if ($priority)
+                $tasks->where('priority', $priority);
+
         }
 
-        return response()->json($tasks);
-
+        return response()->json($tasks->get());
     }
 
     /**
