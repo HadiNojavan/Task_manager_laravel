@@ -51,7 +51,7 @@ class TaskPolicy
      */
     public function update(User $user, Task $task): bool
     {
-        return false;
+        return $task->belongsToUser($user);
     }
 
     /**

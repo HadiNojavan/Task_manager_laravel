@@ -30,7 +30,24 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user=request()->user();
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:255'],
+            'status' => ['required', 'in:pending,completed,incomplete'],
+            'priority' => ['required', 'in:low,medium,high'],
+            'due_date' => ['required', 'date','after_or_equal:today'],
+            'category_id' => ['required', 'exists:categories,id'],
+        ]);
+
+        //you  can create this way or
+        $task=$user->tasks()->create($validated);
+        /*
+    $task = Task::create($validatedData);
+    $user->tasks()->attach($task->id);
+         */
+
+        return response()->json($task);
     }
 
     /**
@@ -53,7 +70,24 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        //
+
+        if ($request->user()->can('update', $task)) {
+            $validated = $request->validate([
+            'title' => ['sometimes', 'string', 'max:255'],
+            'description' => ['sometimes', 'string'],
+            'status' => ['sometimes', 'in:pending,completed,incomplete'],
+            'priority' => ['sometimes', 'in:low,medium,high'],
+            'due_date' => ['sometimes', 'date','after_or_equal:today'],
+            'category_id' => ['sometimes', 'exists:categories,id'],
+        ]);
+
+        $task->update($validated);
+
+        return response()->json($task);
+        }
+        abort(403, 'You are not authorized to update this task');
+
+
     }
 
     /**
@@ -61,6 +95,6 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+
     }
 }
