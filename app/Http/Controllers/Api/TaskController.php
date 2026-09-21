@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -11,9 +11,18 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $user=request()->user();
+        if ($user->isAdmin() || $user->isSuperAdmin()) {
+            $tasks = Task::all();
+        }
+        else {
+            $tasks = $user->tasks()->get();
+        }
+
+        return response()->json($tasks);
+
     }
 
     /**
