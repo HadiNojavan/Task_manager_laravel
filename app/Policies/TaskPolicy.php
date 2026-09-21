@@ -16,16 +16,16 @@ class TaskPolicy
     //the ability here means the methods of this policy
     public function before(User $user, string $ability): bool|null
     {
+        if ($ability === 'forceDelete') {
+            return null;
+        }
+
         if ($user->isAdmin() || $user->isSuperAdmin()) {
             return true;
         }
         return null;
     }
 
-    public function viewAny(User $user): bool
-    {
-       return false;
-    }
 
     /**
      * Determine whether the user can view the model.
@@ -59,12 +59,14 @@ class TaskPolicy
      */
     public function delete(User $user, Task $task): bool
     {
-        return false;
+        return $task->belongsToUser($user);
     }
 
     /**
      * Determine whether the user can restore the model.
      */
+
+    //when we use can in controller laravel automatcilly pass user as first argument even if we dont include it
     public function restore(User $user, Task $task): bool
     {
         return false;
@@ -75,6 +77,6 @@ class TaskPolicy
      */
     public function forceDelete(User $user, Task $task): bool
     {
-        return false;
+        return $user->isSuperAdmin();
     }
 }

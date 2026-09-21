@@ -95,6 +95,31 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
+        $user=request()->user();
+        if ($user->can('delete', $task)) {
+            $task->delete();
+            return response()->json(['message' => 'Task successfully deleted']);
+        }
+        abort(403, 'You are not authorized to delete this task');
+    }
 
+    public function restore(Request $request , Task $task)
+    {
+        $user=request()->user();
+        if ($user->can('restore', $task)) {
+            $task->restore();
+            return response()->json($task);
+        }
+        abort(403, 'You are not authorized to restore this task');
+    }
+
+    public function forceDelete(Request $request, Task $task)
+    {
+        $user=request()->user();
+        if ($user->can('forceDelete', $task)) {
+            $task->forceDelete();
+            return response()->json(['message' => 'Task force deleted successfully']);
+        }
+        abort(403, 'You are not authorized to force delete this task');
     }
 }
