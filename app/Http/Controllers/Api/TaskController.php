@@ -50,7 +50,6 @@ class TaskController extends Controller
             'due_date' => ['required', 'date','after_or_equal:today'],
             'category_id' => ['required', 'exists:categories,id'],
         ]);
-
         //you  can create this way or
         $task=$user->tasks()->create($validated);
         /*
