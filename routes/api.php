@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\Auth\SessionController;
 use App\Http\Controllers\Api\TaskController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -27,4 +28,7 @@ Route::middleware('auth:sanctum','ability:action:crud')->group(function () {
 
     //admin
     Route::patch('/tasks/{task}/restore', [TaskController::class, 'restore'])->name('tasks.restore')->withTrashed();
+    //to see all the users
+    Route::get('/users', [UserController::class, 'index']);
+
 });
