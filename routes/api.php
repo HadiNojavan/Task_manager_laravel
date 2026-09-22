@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\Auth\SessionController;
 use App\Http\Controllers\Api\TaskController;
@@ -16,6 +17,14 @@ Route::middleware('auth:sanctum','ability:action:crud')->group(function () {
     Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
     Route::patch('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
-    Route::patch('/tasks/{task}/restore', [TaskController::class, 'restore'])->name('tasks.restore');
-    Route::delete('/tasks/{task}/force-delete', [TaskController::class, 'forceDelete'])->name('tasks.force-delete');
+
+
+
+    //superadmin
+    //add new admin
+    Route::post('/admins', [AdminController::class, 'store']);
+    Route::delete('/tasks/{task}/force-delete', [TaskController::class, 'forceDelete'])->name('tasks.force-delete')->withTrashed();
+
+    //admin
+    Route::patch('/tasks/{task}/restore', [TaskController::class, 'restore'])->name('tasks.restore')->withTrashed();
 });
