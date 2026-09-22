@@ -16,9 +16,8 @@ class TaskPolicy
     //the ability here means the methods of this policy
     public function before(User $user, string $ability): bool|null
     {
-        if ($ability === 'forceDelete') {
+        if ($ability === 'forceDelete')
             return null;
-        }
 
         if ($user->isAdmin() || $user->isSuperAdmin()) {
             return true;
@@ -79,4 +78,5 @@ class TaskPolicy
     {
         return $user->isSuperAdmin();
     }
+
 }
