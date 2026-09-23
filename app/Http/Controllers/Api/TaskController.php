@@ -33,7 +33,10 @@ class TaskController extends Controller
 
         }
 
-        return response()->json($tasks->get());
+//        return response()->json($tasks->get());
+        $tasks = $tasks->get();
+        $tasks->load(['category']);
+        return  $tasks->toResourceCollection();
     }
 
     /**
@@ -57,20 +60,24 @@ class TaskController extends Controller
     $user->tasks()->attach($task->id);
          */
 
-        return response()->json($task);
+        return $task->toResource();
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Request $request,Task $task)
+    public function show(Request $request, Task $task)
     {
-        //this $task return all task info
-        // dd($task);
-        if ($request->user()->can('view', $task)) {
-            //there is no need for this
-            //$task=Task::find($task);
-            return response()->json($task);
+        $user = $request->user();
+
+        if ($user->isAdmin() || $user->isSuperAdmin()) {
+            $task->load(['category', 'users']);
+            return $task->toResource();
+        }
+
+        if ($user->can('view', $task)) {
+            $task->load('category');
+            return $task->toResource();
         }
         abort(403, 'You are not authorized to view this task');
     }
@@ -93,7 +100,7 @@ class TaskController extends Controller
 
         $task->update($validated);
 
-        return response()->json($task);
+        return  $task->toResource();
         }
         abort(403, 'You are not authorized to update this task');
 
@@ -118,7 +125,8 @@ class TaskController extends Controller
         $user=request()->user();
         if ($user->can('restore', $task)) {
             $task->restore();
-            return response()->json($task);
+            $task->load(['category']);
+            return  $task->toResource();
         }
         abort(403, 'You are not authorized to restore this task');
     }

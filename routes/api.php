@@ -35,4 +35,5 @@ Route::middleware('auth:sanctum','ability:action:crud')->group(function () {
     Route::post('/tasks/{task}/assign', [TaskController::class, 'assign'])->name('tasks.assign');
     Route::delete('/tasks/{task}/unassign/{user}', [TaskController::class, 'unassign'])->name('tasks.unassign');
 
+
 });

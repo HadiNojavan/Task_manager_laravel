@@ -19,7 +19,7 @@ class UserController
                 $role = $request->role;
                 $users = $users->where('role', $role);
             }
-            return response()->json($users->get());
+            return $users->get()->toResourceCollection();
         }
         abort(403,'You are not authorized to view users only admins');
 
