@@ -132,4 +132,46 @@ class TaskController extends Controller
         }
         abort(403, 'You are not authorized to force delete this task');
     }
+
+    public function assign(Request $request, Task $task)
+    {
+        $user = $request->user();
+
+        if ($user->can('assign', $task)) {
+            $validated = $request->validate([
+                'user_ids' => ['required', 'array', 'min:1'],
+                //here we check evrey single id is exits in db or not
+                'user_ids.*' => ['exists:users,id'],
+            ]);
+
+            $task->users()->sync($validated['user_ids']);
+
+            return response()->json([
+                'message' => "Task {$task->id} assigned successfully",
+                'assigned_users' => $request->input('user_ids', [])
+            ]);
+        }
+
+        abort(403, 'You are not authorized to assign this task');
+    }
+
+    public function unassign(Request $request, Task $task, User $user)
+    {
+        $user_check = $request->user();
+        if ($user_check->can('unassign', $task)) {
+
+            //here we go all users of this task and check if in user table this id exits or not
+            if ($task->users()->where('users.id', $user->id)->exists())
+            {
+                $task->users()->detach($user->id);
+
+                return response()->json([
+                    'message' => "User {$user->id} unassigned from Task {$task->id} successfully",
+                    'user_id' => $user->id,
+                ]);
+            }
+            abort(404, "User {$user->id} is not assigned to this task");
+        }
+        abort(403, 'You are not authorized to unassign users from this task');
+    }
 }

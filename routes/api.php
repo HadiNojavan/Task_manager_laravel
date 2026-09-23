@@ -30,5 +30,9 @@ Route::middleware('auth:sanctum','ability:action:crud')->group(function () {
     Route::patch('/tasks/{task}/restore', [TaskController::class, 'restore'])->name('tasks.restore')->withTrashed();
     //to see all the users
     Route::get('/users', [UserController::class, 'index']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
+
+    Route::post('/tasks/{task}/assign', [TaskController::class, 'assign'])->name('tasks.assign');
+    Route::delete('/tasks/{task}/unassign/{user}', [TaskController::class, 'unassign'])->name('tasks.unassign');
 
 });

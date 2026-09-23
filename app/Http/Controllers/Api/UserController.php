@@ -24,4 +24,16 @@ class UserController
         abort(403,'You are not authorized to view users only admins');
 
     }
+
+    //to force delete user by admin
+    public function destroy(Request $request, User $user)
+    {
+
+        if ($user->can('delete', User::class)) {
+            $user->delete();
+            return response()->json(['message' => 'User deleted successfully.',
+            'user' => $user]);
+        }
+        abort(403,'You are not authorized to delete users . only admins can do it ');
+    }
 }
