@@ -7,12 +7,26 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\PersonalAccessToken;
 
 //to login
 class SessionController extends Controller
 {
     public function store(Request $request)
     {
+        $bearerToken = $request->bearerToken();
+
+
+        if ($bearerToken) {
+            $accessToken = PersonalAccessToken::findToken($bearerToken);
+
+            if ($accessToken) {
+                return response()->json([
+                    'message' => 'Please logout first',
+                ], 409);
+            }
+        }
+
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
