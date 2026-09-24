@@ -5,6 +5,7 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -29,6 +30,12 @@ class AdminController extends Controller
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
             'role' => 'admin'
+        ]);
+
+        Log::channel('task')->info('Admin created', [
+            'admin_id' => $admin->id,
+            'admin_email' => $admin->email,
+            'created_by' => $user->id,
         ]);
 
         return response()->json([

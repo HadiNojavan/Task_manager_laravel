@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class UserController
 {
@@ -30,8 +31,15 @@ class UserController
     public function destroy(Request $request, User $user)
     {
 
-        if ($user->can('delete', User::class)) {
+        if ($request->user()->can('delete', User::class)) {
             $user->delete();
+
+            Log::info('User deleted', [
+                'deleted_user_id' => $user->id,
+                'deleted_user_email' => $user->email,
+                'deleted_by' => $request->user()->id,
+            ]);
+
             return response()->json(['message' => 'User deleted successfully.',
             'user' => $user]);
         }

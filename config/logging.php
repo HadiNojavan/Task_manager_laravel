@@ -101,6 +101,17 @@ return [
             ],
             'processors' => [PsrLogMessageProcessor::class],
         ],
+        'auth' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/auth.log'),
+            'level' => 'info',
+        ],
+
+        'task' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/task.log'),
+            'level' => 'info',
+        ],
 
         'stderr' => [
             'driver' => 'monolog',

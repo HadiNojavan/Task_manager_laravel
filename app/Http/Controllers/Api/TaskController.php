@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TaskController extends Controller
 {
@@ -53,8 +54,10 @@ class TaskController extends Controller
             'due_date' => ['required', 'date','after_or_equal:today'],
             'category_id' => ['required', 'exists:categories,id'],
         ]);
-        //you  can create this way or
+
         $task=$user->tasks()->create($validated);
+        Log::channel('task')->info('Task created', ['task_id' => $task->id, 'user_id' => $user->id,]);
+        //you  can create this way or
         /*
     $task = Task::create($validatedData);
     $user->tasks()->attach($task->id);
@@ -99,7 +102,7 @@ class TaskController extends Controller
         ]);
 
         $task->update($validated);
-
+            Log::channel('task')->info('Task updated', ['task_id' => $task->id, 'user_id' => $request->user()->id, 'changes' => $task->getChanges(),]);
         return  $task->toResource();
         }
         abort(403, 'You are not authorized to update this task');
@@ -115,6 +118,7 @@ class TaskController extends Controller
         $user=request()->user();
         if ($user->can('delete', $task)) {
             $task->delete();
+            Log::channel('task')->info('Task deleted', ['task_id' => $task->id, 'user_id' => $user->id]);
             return response()->json(['message' => 'Task successfully deleted']);
         }
         abort(403, 'You are not authorized to delete this task');
@@ -125,6 +129,7 @@ class TaskController extends Controller
         $user=request()->user();
         if ($user->can('restore', $task)) {
             $task->restore();
+            Log::channel('task')->info('Task restored', ['task_id' => $task->id, 'user_id' => $user->id,]);
             $task->load(['category']);
             return  $task->toResource();
         }
@@ -136,6 +141,7 @@ class TaskController extends Controller
         $user=request()->user();
         if ($user->can('forceDelete', $task)) {
             $task->forceDelete();
+            Log::channel('task')->info('Task force deleted', ['task_id' => $task->id, 'user_id' => $user->id,]);
             return response()->json(['message' => 'Task force deleted successfully']);
         }
         abort(403, 'You are not authorized to force delete this task');
@@ -152,7 +158,14 @@ class TaskController extends Controller
                 'user_ids.*' => ['exists:users,id'],
             ]);
 
-            $task->users()->sync($validated['user_ids']);
+            $changes = $task->users()->sync($validated['user_ids']);
+
+            Log::channel('task')->info('Task users assigned', [
+                'task_id' => $task->id,
+                'user_id' => $user->id,
+                'attached_users' => $changes['attached'],
+                'detached_users' => $changes['detached'],
+            ]);
 
             return response()->json([
                 'message' => "Task {$task->id} assigned successfully",
@@ -172,6 +185,11 @@ class TaskController extends Controller
             if ($task->users()->where('users.id', $user->id)->exists())
             {
                 $task->users()->detach($user->id);
+                Log::channel('task')->info('User unassigned from task', [
+                    'task_id' => $task->id,
+                    'user_id' => $user_check->id,
+                    'unassigned_user_id' => $user->id,
+                ]);
 
                 return response()->json([
                     'message' => "User {$user->id} unassigned from Task {$task->id} successfully",

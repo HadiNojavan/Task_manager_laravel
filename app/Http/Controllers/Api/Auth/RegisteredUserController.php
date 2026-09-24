@@ -7,6 +7,7 @@ use App\Models\User;
 use App\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 //to register new user
 class RegisteredUserController extends Controller
@@ -30,6 +31,12 @@ class RegisteredUserController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => UserRole::User
+        ]);
+
+        Log::channel('auth')->info('User registered', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'role' => $user->role->value,
         ]);
 
         //login user
