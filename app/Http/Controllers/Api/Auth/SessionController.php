@@ -47,7 +47,7 @@ class SessionController extends Controller
             ]);
         }
 
-        $token = $user->createToken('authToken', ['action:crud'], now()->addMinutes(10))->plainTextToken;
+        $token = $user->createToken('authToken', ['action:crud'], now()->addMinutes(500))->plainTextToken;
 
         Log::channel('auth')->info('User logged in', [
             'user_id' => $user->id,

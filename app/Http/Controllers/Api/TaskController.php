@@ -143,6 +143,17 @@ class TaskController extends Controller
         if ($user->can('assign', $task)) {
             $validated = $request->validated();
 
+//            $alreadyAssigned = $task->users()->get();
+//            foreach ($alreadyAssigned as $user) {
+//                echo $user->pivot->user_id;
+//                }
+            $alreadyAssigned=$task->users()->pluck('users.id')->toArray();// 6,12
+
+            if ($alreadyAssigned)
+                return response()->json(['message' => 'Some users are already assigned to this task.',
+                    'alreadyAssigned user id:' => $alreadyAssigned]);
+
+
             $changes = $task->users()->sync($validated['user_ids']);
 
             Log::channel('task')->info('Task users assigned', [
