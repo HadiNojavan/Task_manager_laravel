@@ -13,13 +13,14 @@ class UserController
         $user = $request->user();
 
         if ($user->can('viewAny', User::class)) {
-            $users=User::query();
-
+//            $users=User::query();
+                $users=User::with('tasks');
             if ($request->has('role')) {
                 $role = $request->role;
                 $users = $users->where('role', $role);
             }
-            return $users->get()->toResourceCollection();
+            //instead of get we use paginate
+            return $users->paginate(2)->toResourceCollection();
         }
         abort(403,'You are not authorized to view users only admins');
 

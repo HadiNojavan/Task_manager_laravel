@@ -16,7 +16,7 @@ class TaskController extends Controller
         $user = request()->user();
 
         if ($user->isAdmin() || $user->isSuperAdmin()) {
-            $tasks = Task::query();
+            $tasks = Task::with(['category', 'users']);
         } else
             $tasks = $user->tasks();
 
@@ -34,7 +34,7 @@ class TaskController extends Controller
         }
 
 //        return response()->json($tasks->get());
-        $tasks = $tasks->get();
+        $tasks = $tasks->paginate(3);
         $tasks->load(['category']);
         return  $tasks->toResourceCollection();
     }
