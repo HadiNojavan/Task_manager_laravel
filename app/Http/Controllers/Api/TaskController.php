@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\AssignTaskRequest;
+use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -43,24 +46,17 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreTaskRequest $request)
     {
         $user=request()->user();
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string', 'max:255'],
-            'status' => ['required', 'in:pending,completed,incomplete'],
-            'priority' => ['required', 'in:low,medium,high'],
-            'due_date' => ['required', 'date','after_or_equal:today'],
-            'category_id' => ['required', 'exists:categories,id'],
-        ]);
+        $validated=$request->safe()->all();
 
         $task=$user->tasks()->create($validated);
         Log::channel('task')->info('Task created', ['task_id' => $task->id, 'user_id' => $user->id,]);
         //you  can create this way or
         /*
-    $task = Task::create($validatedData);
-    $user->tasks()->attach($task->id);
+            $task = Task::create($validatedData);
+            $user->tasks()->attach($task->id);
          */
 
         return $task->toResource();
@@ -88,26 +84,19 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Task $task)
+    public function update(UpdateTaskRequest $request, Task $task)
     {
 
         if ($request->user()->can('update', $task)) {
-            $validated = $request->validate([
-            'title' => ['sometimes', 'string', 'max:255'],
-            'description' => ['sometimes', 'string'],
-            'status' => ['sometimes', 'in:pending,completed,incomplete'],
-            'priority' => ['sometimes', 'in:low,medium,high'],
-            'due_date' => ['sometimes', 'date','after_or_equal:today'],
-            'category_id' => ['sometimes', 'exists:categories,id'],
-        ]);
+            $validated = $request->validated();
+            $task->update($validated);
+            Log::channel('task')->info('Task updated', ['task_id' => $task->id, 'user_id' => $request->user()->id,
+                'changes' => $task->getChanges(),]);
 
-        $task->update($validated);
-            Log::channel('task')->info('Task updated', ['task_id' => $task->id, 'user_id' => $request->user()->id, 'changes' => $task->getChanges(),]);
-        return  $task->toResource();
-        }
+            return  $task->toResource();
+            }
+
         abort(403, 'You are not authorized to update this task');
-
-
     }
 
     /**
@@ -147,16 +136,12 @@ class TaskController extends Controller
         abort(403, 'You are not authorized to force delete this task');
     }
 
-    public function assign(Request $request, Task $task)
+    public function assign(AssignTaskRequest $request, Task $task)
     {
         $user = $request->user();
 
         if ($user->can('assign', $task)) {
-            $validated = $request->validate([
-                'user_ids' => ['required', 'array', 'min:1'],
-                //here we check evrey single id is exits in db or not
-                'user_ids.*' => ['exists:users,id'],
-            ]);
+            $validated = $request->validated();
 
             $changes = $task->users()->sync($validated['user_ids']);
 

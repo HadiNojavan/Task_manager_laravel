@@ -34,7 +34,7 @@ class UserController
         if ($request->user()->can('delete', User::class)) {
             $user->delete();
 
-            Log::info('User deleted', [
+            Log::channel('auth')->info('User deleted', [
                 'deleted_user_id' => $user->id,
                 'deleted_user_email' => $user->email,
                 'deleted_by' => $request->user()->id,

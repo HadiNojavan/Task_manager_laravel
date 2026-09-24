@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Api\Controller;
+use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
 use App\UserRole;
 use Illuminate\Http\Request;
@@ -18,14 +19,11 @@ class RegisteredUserController extends Controller
         //return view('auth.register');
     }
 
-    public function store(Request $request)
+    public function store(RegisterUserRequest $request)
     {
 
-        $validated=$request->validate([
-        'name'=>['required','string','max:255'],
-        'email'=>['required','string','email','max:255','unique:users'],
-        'password'=>['required','string','min:8'],
-    ]);
+        $validated=$request->validated();
+
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],

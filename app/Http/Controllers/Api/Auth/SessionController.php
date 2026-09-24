@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Api\Controller;
+use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 //to login
 class SessionController extends Controller
 {
-    public function store(Request $request)
+    public function store(LoginRequest $request)
     {
         $bearerToken = $request->bearerToken();
 
@@ -31,10 +32,7 @@ class SessionController extends Controller
             }
         }
 
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'],
-        ]);
+        $credentials = $request->safe()->all();
 
         $user = User::where('email', $credentials['email'])->first();
 

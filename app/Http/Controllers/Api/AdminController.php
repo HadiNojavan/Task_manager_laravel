@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+use App\Http\Requests\AdminStoreRequest;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -11,18 +12,14 @@ class AdminController extends Controller
 {
 
     // add new admin
-    public function store(Request $request)
+    public function store(AdminStoreRequest $request)
     {
         $user = $request->user();
         if ($user->cannot('addAdmin', User::class)) {
             abort(403, 'You are not authorized to add an admin');
         }
 
-        $validatedData = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:5', 'confirmed'],
-        ]);
+        $validatedData=$request->safe()->all();
 
         // create admin
         $admin=User::create([
@@ -32,7 +29,7 @@ class AdminController extends Controller
             'role' => 'admin'
         ]);
 
-        Log::channel('task')->info('Admin created', [
+        Log::channel('auth')->info('Admin created', [
             'admin_id' => $admin->id,
             'admin_email' => $admin->email,
             'created_by' => $user->id,
