@@ -5,7 +5,7 @@ REST API for managing users, tasks, categories, authentication and task assignme
 ## Base URL
 
 ```
-{{base_uri}}
+http://127.0.0.1:8000
 ```
 
 ## Authentication
@@ -45,11 +45,32 @@ Returns:
 
 **Example Accounts**
 
-| Email | Password | Role |
-|---|---|---|
-| hadinojvan6@gmail.com | hadi123 | super_admin |
-| ofarrell@example.net | password123 | user |
-| hesam@example.com | hadi123 | admin |
+Super Admin
+
+```json
+{
+    "email": "hadinojvan6@gmail.com",
+    "password": "hadi123"
+}
+```
+
+User
+
+```json
+{
+    "email": "ofarrell@example.net",
+    "password": "password123"
+}
+```
+
+Admin
+
+```json
+{
+    "email": "hesam@example.com",
+    "password": "hadi123"
+}
+```
 
 ### Register
 
