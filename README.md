@@ -86,8 +86,7 @@ Create a new normal user.
 {
     "name": "Hadi",
     "email": "hadi.test2@example.com",
-    "password": "password123",
-    "password_confirmation": "password123"
+    "password": "password123"
 }
 ```
 
