@@ -1,59 +1,358 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Task Manager API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+REST API for managing users, tasks, categories, authentication and task assignments.
 
-## About Laravel
+## Base URL
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+{{base_uri}}
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Authentication
 
-## Contributing
+Most endpoints require a Bearer Token.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```
+Authorization: Bearer {{auth_token}}
+```
 
-## Code of Conduct
+The token is returned after login.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Auth
 
-## Security Vulnerabilities
+### Login
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```
+POST /api/login
+```
 
-## License
+Login user and receive authentication token.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# Task_manager_laravel
+**Body**
+
+```json
+{
+    "email": "ofarrell@example.net",
+    "password": "password123"
+}
+```
+
+**Response**
+
+Returns:
+- access token
+- user information
+
+**Example Accounts**
+
+| Email | Password | Role |
+|---|---|---|
+| hadinojvan6@gmail.com | hadi123 | super_admin |
+| ofarrell@example.net | password123 | user |
+| hesam@example.com | hadi123 | admin |
+
+### Register
+
+```
+POST /api/register
+```
+
+Create a new normal user.
+
+**Body**
+
+```json
+{
+    "name": "Hadi",
+    "email": "hadi.test2@example.com",
+    "password": "password123",
+    "password_confirmation": "password123"
+}
+```
+
+### Logout
+
+```
+DELETE /api/logout
+```
+
+Logout the authenticated user.
+
+## Users
+
+### Get Users
+
+```
+GET /api/users
+```
+
+Get users. Admin users can also filter users by role.
+
+**Query Parameters**
+
+```
+?role=user
+?role=admin
+?role=super_admin
+```
+
+### Delete User
+
+```
+DELETE /api/users/{user}
+```
+
+Delete a user.
+
+**Example**
+
+```
+DELETE /api/users/3
+```
+
+## Tasks
+
+### Get Tasks
+
+```
+GET /api/tasks
+```
+
+Get tasks available to the authenticated user.
+
+**Query Parameters**
+
+```
+?page=1
+?status=pending
+?priority=high
+```
+
+### Get Single Task
+
+```
+GET /api/tasks/{task}
+```
+
+Get information about a specific task.
+
+**Example**
+
+```
+GET /api/tasks/6
+```
+
+### Create Task
+
+```
+POST /api/tasks
+```
+
+Create a new task.
+
+**Body**
+
+```json
+{
+    "title": "New Task",
+    "description": "Practice API authentication",
+    "status": "pending",
+    "priority": "high",
+    "due_date": "2027-09-25 18:00:00",
+    "category_id": 1
+}
+```
+
+### Update Task
+
+```
+PATCH /api/tasks/{task}
+```
+
+Update an existing task.
+
+**Example**
+
+```
+PATCH /api/tasks/6
+```
+
+**Body**
+
+```json
+{
+    "title": "Updated Task",
+    "priority": "medium"
+}
+```
+
+### Delete Task
+
+```
+DELETE /api/tasks/{task}
+```
+
+Soft delete a task.
+
+**Example**
+
+```
+DELETE /api/tasks/4
+```
+
+### Get Trashed Tasks
+
+```
+GET /api/tasks/trashed
+```
+
+Get tasks that have been soft deleted.
+
+### Restore Task
+
+```
+PATCH /api/tasks/{task}/restore
+```
+
+Restore a soft-deleted task.
+
+**Example**
+
+```
+PATCH /api/tasks/2/restore
+```
+
+### Force Delete Task
+
+```
+DELETE /api/tasks/{task}/force-delete
+```
+
+Permanently delete a task.
+
+**Example**
+
+```
+DELETE /api/tasks/4/force-delete
+```
+
+## Categories
+
+### Get Categories
+
+```
+GET /api/categories
+```
+
+Get all categories.
+
+### Create Category
+
+```
+POST /api/categories
+```
+
+Create a new category.
+
+**Body**
+
+```json
+{
+    "name": "Programming"
+}
+```
+
+## Task Assignment
+
+### Get Assignment Data
+
+```
+GET /api/tasks/assign-data
+```
+
+Get tasks and users that can be used on the task assignment page.
+
+No body is required.
+
+### Assign Task
+
+```
+POST /api/tasks/{task}/assign
+```
+
+Assign one task to multiple users.
+
+**Example**
+
+```
+POST /api/tasks/6/assign
+```
+
+**Body**
+
+```json
+{
+    "user_ids": [6, 12]
+}
+```
+
+### Unassign User From Task
+
+```
+DELETE /api/tasks/{task}/unassign/{user}
+```
+
+Remove a user from a task.
+
+**Example**
+
+```
+DELETE /api/tasks/6/unassign/12
+```
+
+No body is required.
+
+## Super Admin
+
+### Add Admin
+
+```
+POST /api/admins
+```
+
+Create a new admin user.
+
+**Body**
+
+```json
+{
+    "name": "Hesam",
+    "email": "hesam@example.com",
+    "password": "hadi123",
+    "password_confirmation": "hadi123"
+}
+```
+
+## Example Flow
+
+A typical task assignment flow:
+
+```
+1. Login
+2. Get Tasks
+3. Get Users
+4. Select a Task
+5. Select multiple Users
+6. POST /api/tasks/{task}/assign
+7. User IDs are stored in the task_user pivot table
+```
+
+## Roles
+
+```
+user
+admin
+super_admin
+```
+
+Admin and Super Admin have additional permissions depending on the action.
