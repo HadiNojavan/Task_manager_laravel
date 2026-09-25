@@ -140,7 +140,6 @@ class TaskController extends Controller
     {
         $user = $request->user();
 
-        if ($user->can('assign', $task)) {
             $validated = $request->validated();
 
 //            $alreadyAssigned = $task->users()->get();
@@ -167,9 +166,9 @@ class TaskController extends Controller
                 'message' => "Task {$task->id} assigned successfully",
                 'assigned_users' => $request->input('user_ids', [])
             ]);
-        }
 
-        abort(403, 'You are not authorized to assign this task');
+
+//        abort(403, 'You are not authorized to assign this task');
     }
 
     public function unassign(Request $request, Task $task, User $user)
