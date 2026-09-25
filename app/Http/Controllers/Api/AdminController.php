@@ -15,9 +15,6 @@ class AdminController extends Controller
     public function store(AdminStoreRequest $request)
     {
         $user = $request->user();
-        if ($user->cannot('addAdmin', User::class)) {
-            abort(403, 'You are not authorized to add an admin');
-        }
 
         $validatedData=$request->safe()->all();
 
