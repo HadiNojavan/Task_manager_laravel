@@ -2,10 +2,18 @@
 
 REST API for managing users, tasks, categories, authentication and task assignments.
 
+## Running the Project
+
+Start the Laravel server on port 8000:
+
+```
+php artisan serve
+```
+
 ## Base URL
 
 ```
-http://127.0.0.1:8000
+{{base_uri}}
 ```
 
 ## Authentication
@@ -86,7 +94,8 @@ Create a new normal user.
 {
     "name": "Hadi",
     "email": "hadi.test2@example.com",
-    "password": "password123"
+    "password": "password123",
+    "password_confirmation": "password123"
 }
 ```
 
@@ -348,8 +357,7 @@ Create a new admin user.
 {
     "name": "Hesam",
     "email": "hesam@example.com",
-    "password": "hadi123",
-    "password_confirmation": "hadi123"
+    "password": "hadi123"
 }
 ```
 
