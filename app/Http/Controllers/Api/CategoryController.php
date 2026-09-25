@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    public function index()
+    {
+        return Category::all();
+    }
+
+
     public function store(Request $request)
     {
 

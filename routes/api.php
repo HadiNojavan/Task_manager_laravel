@@ -16,10 +16,15 @@ Route::middleware('auth:sanctum','ability:action:crud')->group(function () {
     Route::delete('/logout', [SessionController::class, 'destroy'])->name('logout');
     Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+    //this is for admin
+    Route::get('/tasks/trashed', [TaskController::class, 'trashed'])->name('tasks.trashed')->withTrashed();
+    Route::get('/tasks/assign-data', [TaskController::class, 'assignData']);
+    //
     Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
     Route::patch('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
     Route::post('/categories', [CategoryController::class, 'store']);
+    Route::get('/categories', [CategoryController::class, 'index']);
 
 
 
@@ -27,15 +32,19 @@ Route::middleware('auth:sanctum','ability:action:crud')->group(function () {
     //add new admin
     Route::post('/admins', [AdminController::class, 'store']);
     Route::delete('/tasks/{task}/force-delete', [TaskController::class, 'forceDelete'])->name('tasks.force-delete')->withTrashed();
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
     //admin
     Route::patch('/tasks/{task}/restore', [TaskController::class, 'restore'])->name('tasks.restore')->withTrashed();
     //to see all the users
     Route::get('/users', [UserController::class, 'index']);
-    Route::delete('/users/{user}', [UserController::class, 'destroy']);
+
+
+
 
     Route::post('/tasks/{task}/assign', [TaskController::class, 'assign'])->name('tasks.assign');
     Route::delete('/tasks/{task}/unassign/{user}', [TaskController::class, 'unassign'])->name('tasks.unassign');
+
 
 
 });

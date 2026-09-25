@@ -146,6 +146,7 @@ class TaskController extends Controller
 //            foreach ($alreadyAssigned as $user) {
 //                echo $user->pivot->user_id;
 //                }
+
             $alreadyAssigned=$task->users()->pluck('users.id')->toArray();// 6,12
 
             if ($alreadyAssigned)
@@ -195,4 +196,34 @@ class TaskController extends Controller
         }
         abort(403, 'You are not authorized to unassign users from this task');
     }
+
+    public function trashed(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user->isAdmin() && !$user->isSuperAdmin()) {
+            abort(403, 'You are not authorized to view trashed tasks');
+        }
+
+        $tasks = Task::onlyTrashed()->with('category');
+
+        $tasks = $tasks->paginate(3);
+
+        return $tasks->toResourceCollection();
+    }
+
+    public function assignData(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user->isAdmin() && !$user->isSuperAdmin()) {
+            abort(403, 'You are not authorized to get assign data');
+        }
+
+        return response()->json([
+            'tasks' => Task::all(),
+            'users' => User::where('role', 'user')->get(),
+        ]);
+    }
+
 }
