@@ -1,0 +1,561 @@
+{
+  "info": {
+    "_postman_id": "295d5f7d-9186-428b-8fd1-5eab8f8e99fa",
+    "name": "Task-Manager-Laravel",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "57761158",
+    "_collection_link": "https://go.postman.co/collection/57761158-295d5f7d-9186-428b-8fd1-5eab8f8e99fa?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "index",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "show",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_uri}}/api/tasks/6",
+              "host": [
+                "{{base_uri}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "store",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"new \",\n    \"description\": \"Practice API authentication\",\n    \"status\": \"pending\",\n    \"priority\": \"high\",\n    \"due_date\": \"2027-09-25 18:00:00\",\n    \"category_id\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_uri}}/api/tasks",
+              "host": [
+                "{{base_uri}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "patch",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_uri}}/api/tasks/4",
+              "host": [
+                "{{base_uri}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "index-category",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_uri}}/api/categories",
+              "host": [
+                "{{base_uri}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {\n    pm.environment.unset(\"auth_token\");\n}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_uri}}/api/logout",
+              "host": [
+                "{{base_uri}}"
+              ],
+              "path": [
+                "api",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {\n    const response = pm.response.json();\n\n    if (response.access_token) {\n        pm.environment.set(\"auth_token\", response.access_token);\n    }\n}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"email\": \"ofarrell@example.net\", \"password\": \"password123\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_uri}}/api/login",
+              "host": [
+                "{{base_uri}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            },
+            "description": "{  \n\"email\": \"[<br>hadinojvan6@gmail.com](https://mailto:hadinojvan6@gmail.com)\", \"password\": \"hadi123\"} super-admin\n\n{  \n\"email\": \"[ofarrell@example.net](https://mailto:ofarrell@example.net)\", \"password\": \"password123\"}\n\n{  \n\"email\": \"[hesam@example.com](https://mailto:hesam@example.com)\",  \n\"password\": \"hadi123\"  \n}"
+          },
+          "response": []
+        },
+        {
+          "name": "register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Hadi \",\n    \"email\": \"hadi.test2@example.com\",\n    \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_uri}}/api/register",
+              "host": [
+                "{{base_uri}}"
+              ],
+              "path": [
+                "api",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "superAdmin",
+      "item": [
+        {
+          "name": "addAdmin",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"hesam\",\n    \"email\": \"hesam@example.com\",\n    \"password\": \"hadi123\",\n    \"password_confirmation\": \"hadi123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_uri}}/api/admins",
+              "host": [
+                "{{base_uri}}"
+              ],
+              "path": [
+                "api",
+                "admins"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "forceDelete-task",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_uri}}/api/tasks/4/force-delete",
+              "host": [
+                "{{base_uri}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "4",
+                "force-delete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DelUser",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_uri}}/api/users/3",
+              "host": [
+                "{{base_uri}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "restore",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_uri}}/api/2/restore",
+              "host": [
+                "{{base_uri}}"
+              ],
+              "path": [
+                "api",
+                "2",
+                "restore"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "index-users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_uri}}/api/users",
+              "host": [
+                "{{base_uri}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "role",
+                  "value": "admin",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "super_admin",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Assign-task",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"user_ids\": [6,12]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_uri}}/api/tasks/6/assign",
+              "host": [
+                "{{base_uri}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "6",
+                "assign"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "unAssign-task",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_uri}}/api//tasks/{task}/unassign/{user}",
+              "host": [
+                "{{base_uri}}"
+              ],
+              "path": [
+                "api",
+                "",
+                "tasks",
+                "{task}",
+                "unassign",
+                "{user}"
+              ]
+            },
+            "description": "{{base_uri}}/api//tasks/{task}/unassign/{user}"
+          },
+          "response": []
+        },
+        {
+          "name": "create-category",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "index-trash",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "assign-data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
